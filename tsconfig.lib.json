@@ -5,6 +5,7 @@
     "emitDeclarationOnly": true,
     "rootDir": "src"
   },
+  "include": ["src/**/*.ts"],
   "exclude": [
     "lib",
     "node_modules",
@@ -15,7 +16,6 @@
     "scripts",
     "examples",
     "tmp",
-    "docs",
-    "jest.config.js"
+    "docs"
   ]
 }

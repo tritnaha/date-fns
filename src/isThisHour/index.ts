@@ -1,4 +1,12 @@
-import isSameHour from '../isSameHour/index'
+import { constructNow } from "../constructNow/index.js";
+import { isSameHour } from "../isSameHour/index.js";
+import { toDate } from "../toDate/index.js";
+import type { ContextOptions, DateArg } from "../types.js";
+
+/**
+ * The {@link isThisHour} function options.
+ */
+export interface IsThisHourOptions extends ContextOptions<Date> {}
 
 /**
  * @name isThisHour
@@ -9,9 +17,8 @@ import isSameHour from '../isSameHour/index'
  * @description
  * Is the given date in the same hour as the current date?
  *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- *
  * @param date - The date to check
+ * @param options - An object with options
  *
  * @returns The date is in this hour
  *
@@ -21,8 +28,12 @@ import isSameHour from '../isSameHour/index'
  * const result = isThisHour(new Date(2014, 8, 25, 18))
  * //=> true
  */
-export default function isThisHour<DateType extends Date>(
-  date: DateType | number
+export function isThisHour(
+  date: DateArg<Date> & {},
+  options?: IsThisHourOptions,
 ): boolean {
-  return isSameHour(Date.now(), date)
+  return isSameHour(
+    toDate(date, options?.in),
+    constructNow(options?.in || date),
+  );
 }

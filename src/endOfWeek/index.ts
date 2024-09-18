@@ -1,11 +1,19 @@
-import toDate from '../toDate/index'
-import type { LocalizedOptions, WeekOptions } from '../types'
-import { getDefaultOptions } from '../_lib/defaultOptions/index'
+import { getDefaultOptions } from "../_lib/defaultOptions/index.js";
+import { toDate } from "../toDate/index.js";
+import type {
+  ContextOptions,
+  DateArg,
+  LocalizedOptions,
+  WeekOptions,
+} from "../types.js";
 
 /**
  * The {@link endOfWeek} function options.
  */
-export interface EndOfWeekOptions extends WeekOptions, LocalizedOptions {}
+export interface EndOfWeekOptions<DateType extends Date = Date>
+  extends WeekOptions,
+    LocalizedOptions<"options">,
+    ContextOptions<DateType> {}
 
 /**
  * @name endOfWeek
@@ -17,6 +25,7 @@ export interface EndOfWeekOptions extends WeekOptions, LocalizedOptions {}
  * The result will be in the local timezone.
  *
  * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
  *
  * @param date - The original date
  * @param options - An object with options
@@ -33,23 +42,23 @@ export interface EndOfWeekOptions extends WeekOptions, LocalizedOptions {}
  * const result = endOfWeek(new Date(2014, 8, 2, 11, 55, 0), { weekStartsOn: 1 })
  * //=> Sun Sep 07 2014 23:59:59.999
  */
-export default function endOfWeek<DateType extends Date>(
-  date: DateType | number,
-  options?: EndOfWeekOptions
-): DateType {
-  const defaultOptions = getDefaultOptions()
+export function endOfWeek<
+  DateType extends Date,
+  ResultDate extends Date = DateType,
+>(date: DateArg<DateType>, options?: EndOfWeekOptions<ResultDate>): ResultDate {
+  const defaultOptions = getDefaultOptions();
   const weekStartsOn =
     options?.weekStartsOn ??
     options?.locale?.options?.weekStartsOn ??
     defaultOptions.weekStartsOn ??
     defaultOptions.locale?.options?.weekStartsOn ??
-    0
+    0;
 
-  const _date = toDate(date)
-  const day = _date.getDay()
-  const diff = (day < weekStartsOn ? -7 : 0) + 6 - (day - weekStartsOn)
+  const _date = toDate(date, options?.in);
+  const day = _date.getDay();
+  const diff = (day < weekStartsOn ? -7 : 0) + 6 - (day - weekStartsOn);
 
-  _date.setDate(_date.getDate() + diff)
-  _date.setHours(23, 59, 59, 999)
-  return _date
+  _date.setDate(_date.getDate() + diff);
+  _date.setHours(23, 59, 59, 999);
+  return _date;
 }

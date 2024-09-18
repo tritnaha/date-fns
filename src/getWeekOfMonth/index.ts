@@ -1,13 +1,22 @@
-import getDate from '../getDate/index'
-import getDay from '../getDay/index'
-import startOfMonth from '../startOfMonth/index'
-import type { LocalizedOptions, WeekOptions } from '../types'
-import { getDefaultOptions } from '../_lib/defaultOptions/index'
+import { getDefaultOptions } from "../_lib/defaultOptions/index.js";
+import { getDate } from "../getDate/index.js";
+import { getDay } from "../getDay/index.js";
+import { startOfMonth } from "../startOfMonth/index.js";
+import { toDate } from "../toDate/index.js";
+import type {
+  ContextOptions,
+  DateArg,
+  LocalizedOptions,
+  WeekOptions,
+} from "../types.js";
 
 /**
  * The {@link getWeekOfMonth} function options.
  */
-export interface GetWeekOfMonthOptions extends LocalizedOptions, WeekOptions {}
+export interface GetWeekOfMonthOptions
+  extends LocalizedOptions<"options">,
+    WeekOptions,
+    ContextOptions<Date> {}
 
 /**
  * @name getWeekOfMonth
@@ -16,8 +25,6 @@ export interface GetWeekOfMonthOptions extends LocalizedOptions, WeekOptions {}
  *
  * @description
  * Get the week of the month of the given date.
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
  *
  * @param date - The given date
  * @param options - An object with options.
@@ -29,26 +36,26 @@ export interface GetWeekOfMonthOptions extends LocalizedOptions, WeekOptions {}
  * const result = getWeekOfMonth(new Date(2017, 10, 9))
  * //=> 2
  */
-export default function getWeekOfMonth<DateType extends Date>(
-  date: DateType | number,
-  options?: GetWeekOfMonthOptions
+export function getWeekOfMonth(
+  date: DateArg<Date> & {},
+  options?: GetWeekOfMonthOptions,
 ): number {
-  const defaultOptions = getDefaultOptions()
+  const defaultOptions = getDefaultOptions();
   const weekStartsOn =
     options?.weekStartsOn ??
     options?.locale?.options?.weekStartsOn ??
     defaultOptions.weekStartsOn ??
     defaultOptions.locale?.options?.weekStartsOn ??
-    0
+    0;
 
-  const currentDayOfMonth = getDate(date)
-  if (isNaN(currentDayOfMonth)) return NaN
+  const currentDayOfMonth = getDate(toDate(date, options?.in));
+  if (isNaN(currentDayOfMonth)) return NaN;
 
-  const startWeekDay = getDay(startOfMonth(date))
+  const startWeekDay = getDay(startOfMonth(date, options));
 
-  let lastDayOfFirstWeek = weekStartsOn - startWeekDay
-  if (lastDayOfFirstWeek <= 0) lastDayOfFirstWeek += 7
+  let lastDayOfFirstWeek = weekStartsOn - startWeekDay;
+  if (lastDayOfFirstWeek <= 0) lastDayOfFirstWeek += 7;
 
-  const remainingDaysAfterFirstWeek = currentDayOfMonth - lastDayOfFirstWeek
-  return Math.ceil(remainingDaysAfterFirstWeek / 7) + 1
+  const remainingDaysAfterFirstWeek = currentDayOfMonth - lastDayOfFirstWeek;
+  return Math.ceil(remainingDaysAfterFirstWeek / 7) + 1;
 }

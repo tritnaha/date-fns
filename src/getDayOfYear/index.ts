@@ -1,6 +1,12 @@
-import differenceInCalendarDays from '../differenceInCalendarDays/index'
-import startOfYear from '../startOfYear/index'
-import toDate from '../toDate/index'
+import { differenceInCalendarDays } from "../differenceInCalendarDays/index.js";
+import { startOfYear } from "../startOfYear/index.js";
+import { toDate } from "../toDate/index.js";
+import type { ContextOptions, DateArg } from "../types.js";
+
+/**
+ * The {@link getDayOfYear} function options.
+ */
+export interface GetDayOfYearOptions extends ContextOptions<Date> {}
 
 /**
  * @name getDayOfYear
@@ -10,9 +16,8 @@ import toDate from '../toDate/index'
  * @description
  * Get the day of the year of the given date.
  *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- *
  * @param date - The given date
+ * @param options - The options
  *
  * @returns The day of year
  *
@@ -21,11 +26,12 @@ import toDate from '../toDate/index'
  * const result = getDayOfYear(new Date(2014, 6, 2))
  * //=> 183
  */
-export default function getDayOfYear<DateType extends Date>(
-  date: DateType | number
+export function getDayOfYear(
+  date: DateArg<Date> & {},
+  options?: GetDayOfYearOptions | undefined,
 ): number {
-  const _date = toDate(date)
-  const diff = differenceInCalendarDays(_date, startOfYear(_date))
-  const dayOfYear = diff + 1
-  return dayOfYear
+  const _date = toDate(date, options?.in);
+  const diff = differenceInCalendarDays(_date, startOfYear(_date));
+  const dayOfYear = diff + 1;
+  return dayOfYear;
 }

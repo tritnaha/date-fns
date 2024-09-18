@@ -1,4 +1,4 @@
-import { millisecondsInHour } from '../constants/index'
+import { millisecondsInHour } from "../constants/index.js";
 
 /**
  * @name hoursToMilliseconds
@@ -7,8 +7,6 @@ import { millisecondsInHour } from '../constants/index'
  *
  * @description
  * Convert a number of hours to a full number of milliseconds.
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
  *
  * @param hours - number of hours to be converted
  *
@@ -19,6 +17,6 @@ import { millisecondsInHour } from '../constants/index'
  * const result = hoursToMilliseconds(2)
  * //=> 7200000
  */
-export default function hoursToMilliseconds(hours: number): number {
-  return Math.floor(hours * millisecondsInHour)
+export function hoursToMilliseconds(hours: number): number {
+  return Math.trunc(hours * millisecondsInHour);
 }

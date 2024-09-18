@@ -1,10 +1,20 @@
-import isSameWeek from '../isSameWeek/index'
-import type { LocalizedOptions, WeekOptions } from '../types'
+import { constructFrom } from "../constructFrom/index.js";
+import { constructNow } from "../constructNow/index.js";
+import { isSameWeek } from "../isSameWeek/index.js";
+import type {
+  ContextOptions,
+  DateArg,
+  LocalizedOptions,
+  WeekOptions,
+} from "../types.js";
 
 /**
  * The {@link isThisWeek} function options.
  */
-export interface IsThisWeekOptions extends WeekOptions, LocalizedOptions {}
+export interface IsThisWeekOptions
+  extends WeekOptions,
+    LocalizedOptions<"options">,
+    ContextOptions<Date> {}
 
 /**
  * @name isThisWeek
@@ -14,8 +24,6 @@ export interface IsThisWeekOptions extends WeekOptions, LocalizedOptions {}
  *
  * @description
  * Is the given date in the same week as the current date?
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
  *
  * @param date - The date to check
  * @param options - The object with options
@@ -33,9 +41,13 @@ export interface IsThisWeekOptions extends WeekOptions, LocalizedOptions {}
  * const result = isThisWeek(new Date(2014, 8, 21), { weekStartsOn: 1 })
  * //=> false
  */
-export default function isThisWeek<DateType extends Date>(
-  date: DateType | number,
-  options?: IsThisWeekOptions
+export function isThisWeek(
+  date: DateArg<Date> & {},
+  options?: IsThisWeekOptions,
 ): boolean {
-  return isSameWeek(date, Date.now(), options)
+  return isSameWeek(
+    constructFrom(options?.in || date, date),
+    constructNow(options?.in || date),
+    options,
+  );
 }

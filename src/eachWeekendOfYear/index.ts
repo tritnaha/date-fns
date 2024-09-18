@@ -1,6 +1,13 @@
-import eachWeekendOfInterval from '../eachWeekendOfInterval/index'
-import endOfYear from '../endOfYear/index'
-import startOfYear from '../startOfYear/index'
+import { eachWeekendOfInterval } from "../eachWeekendOfInterval/index.js";
+import { endOfYear } from "../endOfYear/index.js";
+import { startOfYear } from "../startOfYear/index.js";
+import type { ContextOptions, DateArg } from "../types.js";
+
+/**
+ * The {@link eachWeekendOfYear} function options.
+ */
+export interface EachWeekendOfYearOptions<DateType extends Date = Date>
+  extends ContextOptions<DateType> {}
 
 /**
  * @name eachWeekendOfYear
@@ -11,12 +18,12 @@ import startOfYear from '../startOfYear/index'
  * Get all the Saturdays and Sundays in the year.
  *
  * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
  *
  * @param date - The given year
+ * @param options - An object with options
  *
  * @returns An array containing all the Saturdays and Sundays
- *
- * @throws {RangeError} The passed date is invalid
  *
  * @example
  * // Lists all Saturdays and Sundays in the year
@@ -29,10 +36,14 @@ import startOfYear from '../startOfYear/index'
  * // ]
  * ]
  */
-export default function eachWeekendOfYear<DateType extends Date>(
-  date: DateType | number
-): DateType[] {
-  const startDate = startOfYear(date)
-  const endDate = endOfYear(date)
-  return eachWeekendOfInterval({ start: startDate, end: endDate })
+export function eachWeekendOfYear<
+  DateType extends Date,
+  ResultDate extends Date = DateType,
+>(
+  date: DateArg<DateType>,
+  options?: EachWeekendOfYearOptions<ResultDate>,
+): ResultDate[] {
+  const start = startOfYear(date, options);
+  const end = endOfYear(date, options);
+  return eachWeekendOfInterval({ start, end }, options);
 }

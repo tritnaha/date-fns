@@ -1,12 +1,20 @@
-import addDays from '../addDays/index'
-import toDate from '../toDate/index'
-import type { LocalizedOptions, WeekOptions } from '../types'
-import { getDefaultOptions } from '../_lib/defaultOptions/index'
+import { getDefaultOptions } from "../_lib/defaultOptions/index.js";
+import { addDays } from "../addDays/index.js";
+import { toDate } from "../toDate/index.js";
+import type {
+  ContextOptions,
+  DateArg,
+  LocalizedOptions,
+  WeekOptions,
+} from "../types.js";
 
 /**
  * The {@link setDay} function options.
  */
-export interface SetDayOptions extends LocalizedOptions, WeekOptions {}
+export interface SetDayOptions<DateType extends Date = Date>
+  extends LocalizedOptions<"options">,
+    WeekOptions,
+    ContextOptions<DateType> {}
 
 /**
  * @name setDay
@@ -17,6 +25,7 @@ export interface SetDayOptions extends LocalizedOptions, WeekOptions {}
  * Set the day of the week to the given date.
  *
  * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
+ * @typeParam ResultDate - The result `Date` type, it is the type returned from the context function if it is passed, or inferred from the arguments.
  *
  * @param date - The date to be changed
  * @param day - The day of the week of the new date
@@ -34,29 +43,32 @@ export interface SetDayOptions extends LocalizedOptions, WeekOptions {}
  * const result = setDay(new Date(2014, 8, 1), 0, { weekStartsOn: 1 })
  * //=> Sun Sep 07 2014 00:00:00
  */
-export default function setDay<DateType extends Date>(
-  date: DateType | number,
+export function setDay<
+  DateType extends Date,
+  ResultDate extends Date = DateType,
+>(
+  date: DateArg<DateType>,
   day: number,
-  options?: SetDayOptions
-): DateType {
-  const defaultOptions = getDefaultOptions()
+  options?: SetDayOptions<ResultDate>,
+): ResultDate {
+  const defaultOptions = getDefaultOptions();
   const weekStartsOn =
     options?.weekStartsOn ??
     options?.locale?.options?.weekStartsOn ??
     defaultOptions.weekStartsOn ??
     defaultOptions.locale?.options?.weekStartsOn ??
-    0
+    0;
 
-  const _date = toDate(date)
-  const currentDay = _date.getDay()
+  const date_ = toDate(date, options?.in);
+  const currentDay = date_.getDay();
 
-  const remainder = day % 7
-  const dayIndex = (remainder + 7) % 7
+  const remainder = day % 7;
+  const dayIndex = (remainder + 7) % 7;
 
-  const delta = 7 - weekStartsOn
+  const delta = 7 - weekStartsOn;
   const diff =
     day < 0 || day > 6
       ? day - ((currentDay + delta) % 7)
-      : ((dayIndex + delta) % 7) - ((currentDay + delta) % 7)
-  return addDays(_date, diff)
+      : ((dayIndex + delta) % 7) - ((currentDay + delta) % 7);
+  return addDays(date_, diff, options);
 }

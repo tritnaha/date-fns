@@ -1,4 +1,5 @@
-import getTime from '../getTime/index'
+import { toDate } from "../toDate/index.js";
+import type { DateArg } from "../types.js";
 
 /**
  * @name getUnixTime
@@ -7,8 +8,6 @@ import getTime from '../getTime/index'
  *
  * @description
  * Get the seconds timestamp of the given date.
- *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
  *
  * @param date - The given date
  *
@@ -19,8 +18,6 @@ import getTime from '../getTime/index'
  * const result = getUnixTime(new Date(2012, 1, 29, 11, 45, 5))
  * //=> 1330512305
  */
-export default function getUnixTime<DateType extends Date>(
-  date: DateType | number
-): number {
-  return Math.floor(getTime(date) / 1000)
+export function getUnixTime(date: DateArg<Date> & {}): number {
+  return Math.trunc(+toDate(date) / 1000);
 }

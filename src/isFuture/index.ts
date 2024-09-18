@@ -1,4 +1,5 @@
-import toDate from '../toDate/index'
+import { toDate } from "../toDate/index.js";
+import type { DateArg } from "../types.js";
 
 /**
  * @name isFuture
@@ -9,8 +10,6 @@ import toDate from '../toDate/index'
  * @description
  * Is the given date in the future?
  *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- *
  * @param date - The date to check
  *
  * @returns The date is in the future
@@ -20,8 +19,6 @@ import toDate from '../toDate/index'
  * const result = isFuture(new Date(2014, 11, 31))
  * //=> true
  */
-export default function isFuture<DateType extends Date>(
-  date: DateType | number
-): boolean {
-  return +toDate(date) > Date.now()
+export function isFuture(date: DateArg<Date> & {}): boolean {
+  return +toDate(date) > Date.now();
 }

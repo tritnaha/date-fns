@@ -1,4 +1,12 @@
-import isSameDay from '../isSameDay/index'
+import { constructFrom } from "../constructFrom/index.js";
+import { constructNow } from "../constructNow/index.js";
+import { isSameDay } from "../isSameDay/index.js";
+import type { ContextOptions, DateArg } from "../types.js";
+
+/**
+ * The {@link isToday} function options.
+ */
+export interface IsTodayOptions extends ContextOptions<Date> {}
 
 /**
  * @name isToday
@@ -9,9 +17,8 @@ import isSameDay from '../isSameDay/index'
  * @description
  * Is the given date today?
  *
- * @typeParam DateType - The `Date` type, the function operates on. Gets inferred from passed arguments. Allows to use extensions like [`UTCDate`](https://github.com/date-fns/utc).
- *
  * @param date - The date to check
+ * @param options - An object with options
  *
  * @returns The date is today
  *
@@ -20,8 +27,12 @@ import isSameDay from '../isSameDay/index'
  * const result = isToday(new Date(2014, 9, 6, 14, 0))
  * //=> true
  */
-export default function isToday<DateType extends Date>(
-  date: DateType | number
+export function isToday(
+  date: DateArg<Date> & {},
+  options?: IsTodayOptions | undefined,
 ): boolean {
-  return isSameDay(date, Date.now())
+  return isSameDay(
+    constructFrom(options?.in || date, date),
+    constructNow(options?.in || date),
+  );
 }
